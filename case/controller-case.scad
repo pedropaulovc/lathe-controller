@@ -5,7 +5,7 @@
 case_width = 127;      // 5 inches
 case_depth = 80;       // 3.15 inches
 case_height = 180;     // 7 inches
-wall_thickness = 3;
+wall_thickness = 4;
 
 // Component hole dimensions
 display_width = 50;
@@ -24,6 +24,9 @@ post_height = 10;
 corner_post_diameter = 10;
 corner_post_offset = 10;
 
+// Rounding radius
+corner_radius = 3;
+
 // Component positions from center
 display_y_offset = 60;
 pot_x_offset = 35;
@@ -38,11 +41,31 @@ estop_y_offset = -50;
 flora_mount_spacing_x = 45;
 flora_mount_spacing_y = 45;
 
+// Rounded box module
+module rounded_box(size, radius) {
+    x = size[0];
+    y = size[1];
+    z = size[2];
+    
+    hull() {
+        for (i = [0, 1]) {
+            for (j = [0, 1]) {
+                for (k = [0, 1]) {
+                    translate([radius + i*(x-2*radius), 
+                               radius + j*(y-2*radius), 
+                               radius + k*(z-2*radius)])
+                        sphere(r=radius);
+                }
+            }
+        }
+    }
+}
+
 // Main case module
 module main_case() {
     difference() {
-        // Main body
-        cube([case_width, case_depth, case_height]);
+        // Main body with rounded corners
+        rounded_box([case_width, case_depth, case_height], corner_radius);
         
         // Hollow interior
         translate([wall_thickness, wall_thickness, wall_thickness])
@@ -102,17 +125,20 @@ module main_case() {
         }
     }
     
-    // Back panel screw posts
+    // Back panel screw posts - extending from back wall
     for(x = [0, 1]) {
         for(z = [0, 1]) {
             translate([corner_post_offset + x*(case_width - 2*corner_post_offset),
-                      case_depth - corner_post_diameter/2,
+                      case_depth - wall_thickness,
                       corner_post_offset + z*(case_height - 2*corner_post_offset)]) {
                 difference() {
-                    rotate([90, 0, 0])
+                    // Post extending from back wall
+                    translate([0, -corner_post_diameter + wall_thickness, 0])
+                        rotate([90, 0, 0])
                         cylinder(h=corner_post_diameter, d=corner_post_diameter);
-                    rotate([90, 0, 0])
-                        translate([0, 0, -1])
+                    // Screw hole
+                    translate([0, -corner_post_diameter + wall_thickness - 1, 0])
+                        rotate([90, 0, 0])
                         cylinder(h=corner_post_diameter + 2, d=post_hole_diameter);
                 }
             }
