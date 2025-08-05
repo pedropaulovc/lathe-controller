@@ -64,8 +64,30 @@ module rounded_box(size, radius) {
 // Main case module
 module main_case() {
     difference() {
-        // Main body with rounded corners
-        rounded_box([case_width, case_depth, case_height], corner_radius);
+        union() {
+            // Main body with rounded corners
+            rounded_box([case_width, case_depth, case_height], corner_radius);
+            
+            // Back panel screw posts with support structure
+            for(x = [0, 1]) {
+                for(z = [0, 1]) {
+                    translate([corner_post_offset + x*(case_width - 2*corner_post_offset),
+                              case_depth - wall_thickness,
+                              corner_post_offset + z*(case_height - 2*corner_post_offset)]) {
+                        // Support boss connecting to back wall
+                        hull() {
+                            // Cylinder at the mounting point
+                            translate([0, -corner_post_diameter/2 + wall_thickness/2, 0])
+                                rotate([90, 0, 0])
+                                cylinder(h=corner_post_diameter, d=corner_post_diameter);
+                            // Connection to back wall - wider base
+                            translate([-corner_post_diameter/2, -1, -corner_post_diameter/2])
+                                cube([corner_post_diameter, wall_thickness + 1, corner_post_diameter]);
+                        }
+                    }
+                }
+            }
+        }
         
         // Hollow interior
         translate([wall_thickness, wall_thickness, wall_thickness])
@@ -125,26 +147,14 @@ module main_case() {
         }
     }
     
-    // Back panel screw posts with support structure
+    // Screw holes for back panel posts
     for(x = [0, 1]) {
         for(z = [0, 1]) {
             translate([corner_post_offset + x*(case_width - 2*corner_post_offset),
-                      case_depth - wall_thickness,
+                      case_depth + 1,
                       corner_post_offset + z*(case_height - 2*corner_post_offset)]) {
-                // Support boss connecting to back wall
-                hull() {
-                    // Cylinder at the mounting point
-                    translate([0, 0, 0])
-                        rotate([90, 0, 0])
-                        cylinder(h=corner_post_diameter, d=corner_post_diameter);
-                    // Connection to back wall
-                    translate([-corner_post_diameter/2, 0, -corner_post_diameter/2])
-                        cube([corner_post_diameter, 1, corner_post_diameter]);
-                }
-                // Screw hole
-                translate([0, 1, 0])
-                    rotate([90, 0, 0])
-                    cylinder(h=corner_post_diameter + 2, d=post_hole_diameter);
+                rotate([90, 0, 0])
+                    cylinder(h=corner_post_diameter + wall_thickness + 2, d=post_hole_diameter);
             }
         }
     }
