@@ -31,13 +31,13 @@ corner_radius = 3;
 // Component positions from center
 display_y_offset = 60;
 pot_x_offset = 35;
-pot_y_offset = 35;
+pot_y_offset = 20;
 run_button_x_offset = -30;
-run_button_y_offset = 0;
+run_button_y_offset = -15;
 jog_button_x_offset = 30;
-jog_button_y_offset = 0;
+jog_button_y_offset = -15;
 toggle_switch_x_offset = -35;
-toggle_switch_y_offset = 35;
+toggle_switch_y_offset = 20;
 estop_y_offset = -50;
 
 // FLORA mounting positions
