@@ -148,20 +148,22 @@ module main_case() {
             translate([corner_post_offset + x*(case_width - 2*corner_post_offset),
                       case_depth - wall_thickness,
                       corner_post_offset + z*(case_height - 2*corner_post_offset)]) {
-                // Support boss connecting to back wall
-                hull() {
-                    // Cylinder at the mounting point
-                    translate([0, 0, 0])
+                difference() {
+                    // Support boss connecting to back wall
+                    hull() {
+                        // Cylinder at the mounting point
+                        translate([0, 0, 0])
+                            rotate([90, 0, 0])
+                            cylinder(h=corner_post_diameter, d=corner_post_diameter);
+                        // Connection to back wall
+                        translate([-corner_post_diameter/2, 0, -corner_post_diameter/2])
+                            cube([corner_post_diameter, 1, corner_post_diameter]);
+                    }
+                    // Screw hole through the entire post
+                    translate([0, 1, 0])
                         rotate([90, 0, 0])
-                        cylinder(h=corner_post_diameter, d=corner_post_diameter);
-                    // Connection to back wall
-                    translate([-corner_post_diameter/2, 0, -corner_post_diameter/2])
-                        cube([corner_post_diameter, 1, corner_post_diameter]);
+                        cylinder(h=corner_post_diameter + 2, d=post_hole_diameter);
                 }
-                // Screw hole
-                translate([0, 1, 0])
-                    rotate([90, 0, 0])
-                    cylinder(h=corner_post_diameter + 2, d=post_hole_diameter);
             }
         }
     }
@@ -194,14 +196,21 @@ module back_panel() {
             }
         }
         
-        // Mounting holes
+        // Mounting holes with countersinks
         for(x = [0, 1]) {
             for(z = [0, 1]) {
                 translate([corner_post_offset - wall_thickness + x*(panel_width - 2*(corner_post_offset - wall_thickness)),
                           -1,
-                          corner_post_offset - wall_thickness + z*(panel_height - 2*(corner_post_offset - wall_thickness))])
+                          corner_post_offset - wall_thickness + z*(panel_height - 2*(corner_post_offset - wall_thickness))]) {
+                    // Through hole
                     rotate([-90, 0, 0])
-                    cylinder(h=wall_thickness + 2, d=3.5);  // M3 clearance
+                        cylinder(h=wall_thickness + 2, d=3.5);  // M3 clearance
+                    
+                    // Countersink (M3 flat head: 6mm diameter, 1.65mm deep)
+                    translate([0, wall_thickness - 1.65, 0])
+                        rotate([-90, 0, 0])
+                        cylinder(h=1.65 + 1, d1=3.5, d2=6);
+                }
             }
         }
     }
