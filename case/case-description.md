@@ -38,7 +38,7 @@ Inside the case, there are several mounting features:
 - **Screw Posts**: Four threaded posts at the corners of the back opening. These posts have 2.5mm holes that can be tapped for M3 threads, allowing the back panel to be securely attached with screws.
 
 ## Manufacturing Notes
-The case is designed to print upright as shown, with no support material required. The wall thickness is 3mm throughout, providing good strength while keeping material usage reasonable. All round holes use high-resolution curves to ensure smooth surfaces for component mounting.
+The case is designed to print upright as shown, with no support material required. The wall thickness is 4mm throughout, providing good strength while keeping material usage reasonable. All round holes use high-resolution curves to ensure smooth surfaces for component mounting.
 
 ## Assembly Process
 To build the controller, you would first 3D print both the main case and back panel. Then install the electronics inside, wire everything according to the provided diagrams, test the system, and finally attach the back panel with four M3 screws. The NPT fitting in the top allows for professional cable management connecting to your VFD.

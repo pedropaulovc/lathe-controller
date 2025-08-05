@@ -22,7 +22,7 @@ post_height = 10;
 
 // Back panel screw posts
 corner_post_diameter = 10;
-corner_post_offset = 10;
+corner_post_offset = wall_thickness;
 
 // Rounding radius
 corner_radius = 3;
@@ -109,6 +109,11 @@ module main_case() {
     translate([case_width/2 - display_width/2 - 5, wall_thickness, 
                case_height/2 + display_y_offset - display_height/2 - 5])
         cube([display_width + 10, 15, 3]);
+    
+    // Display bridge support
+    translate([case_width/2 - display_width/2, wall_thickness, 
+               case_height/2 + display_y_offset + display_height/2 - 3])
+        cube([display_width, 15, 3]);
     
     // FLORA mounting posts
     for(x = [-1, 1]) {
