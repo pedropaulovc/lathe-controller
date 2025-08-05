@@ -1,12 +1,11 @@
 // Lathe Controller Case - 5" wide max 8" tall
-// Front controls, top cable entry, with lid
+// Front controls, top cable entry, removable back panel
 
 // Case dimensions
 case_width = 127;      // 5 inches = 127mm
 case_height = 180;     // ~7 inches, under 8" limit  
 case_depth = 80;       // 3.15 inches depth
 wall_thickness = 3;
-lid_thickness = 3;
 
 // Control component dimensions
 display_width = 50;
@@ -18,34 +17,46 @@ estop_diameter = 22;         // Round emergency stop
 // NPT 1/2 cable entry
 npt_half_diameter = 21.34;   // NPT 1/2 thread diameter
 
+// Back panel screws
+screw_diameter = 3.2;        // M3 screws
+screw_head_diameter = 6;
+
 module case_body() {
     difference() {
-        // Main case body
-        cube([case_width, case_depth, case_height]);
+        // Main case body with top and open back
+        union() {
+            // Main walls (front, left, right, top)
+            difference() {
+                cube([case_width, case_depth, case_height]);
+                // Remove back wall and internal cavity
+                translate([wall_thickness, wall_thickness, wall_thickness])
+                    cube([case_width - 2*wall_thickness, 
+                          case_depth - wall_thickness + 1, 
+                          case_height - 2*wall_thickness]);
+            }
+        }
         
-        // Internal cavity (open top for lid)
-        translate([wall_thickness, wall_thickness, wall_thickness])
-            cube([case_width - 2*wall_thickness, 
-                  case_depth - 2*wall_thickness, 
-                  case_height - wall_thickness + 1]);
+        // NPT 1/2 cable entry hole in top
+        translate([case_width/2, case_depth/2, case_height - wall_thickness - 1])
+            cylinder(h = wall_thickness + 2, d = npt_half_diameter);
     }
 }
 
-module case_lid() {
+module back_panel() {
     difference() {
-        // Lid base
-        cube([case_width, case_depth, lid_thickness]);
+        // Back panel
+        cube([case_width - 2*wall_thickness, wall_thickness, case_height - 2*wall_thickness]);
         
-        // NPT 1/2 cable entry hole
-        translate([case_width/2, case_depth/2, -1])
-            cylinder(h = lid_thickness + 2, d = npt_half_diameter);
+        // Screw holes for mounting
+        translate([15, -1, 15])
+            cylinder(h = wall_thickness + 2, d = screw_diameter);
+        translate([case_width - 2*wall_thickness - 15, -1, 15])
+            cylinder(h = wall_thickness + 2, d = screw_diameter);
+        translate([15, -1, case_height - 2*wall_thickness - 15])
+            cylinder(h = wall_thickness + 2, d = screw_diameter);
+        translate([case_width - 2*wall_thickness - 15, -1, case_height - 2*wall_thickness - 15])
+            cylinder(h = wall_thickness + 2, d = screw_diameter);
     }
-    
-    // Lid lip for snug fit
-    translate([wall_thickness + 1, wall_thickness + 1, -2])
-        cube([case_width - 2*wall_thickness - 2, 
-              case_depth - 2*wall_thickness - 2, 
-              2]);
 }
 
 module front_panel_cutouts() {
@@ -53,21 +64,21 @@ module front_panel_cutouts() {
     translate([case_width/2 - display_width/2, -1, case_height - 60])
         cube([display_width, wall_thickness + 2, display_height]);
     
-    // Speed potentiometer (upper right)
+    // Speed potentiometer (upper right) - round hole
     translate([case_width - 35, -1, case_height - 100])
-        cylinder(h = wall_thickness + 2, d = pot_diameter);
+        cylinder(h = wall_thickness + 2, d = pot_diameter, $fn = 32);
     
-    // Run pushbutton 32-P-970046-01 (middle left)
+    // Run pushbutton 32-P-970046-01 (middle left) - round hole
     translate([25, -1, case_height/2 + 20])
-        cylinder(h = wall_thickness + 2, d = pushbutton_diameter);
+        cylinder(h = wall_thickness + 2, d = pushbutton_diameter, $fn = 32);
     
-    // Jog pushbutton 32-P-970046-01 (middle right)
+    // Jog pushbutton 32-P-970046-01 (middle right) - round hole
     translate([case_width - 25, -1, case_height/2 + 20])
-        cylinder(h = wall_thickness + 2, d = pushbutton_diameter);
+        cylinder(h = wall_thickness + 2, d = pushbutton_diameter, $fn = 32);
     
-    // Emergency stop (lower center) - round
+    // Emergency stop (lower center) - round hole
     translate([case_width/2, -1, 40])
-        cylinder(h = wall_thickness + 2, d = estop_diameter);
+        cylinder(h = wall_thickness + 2, d = estop_diameter, $fn = 32);
 }
 
 // Side mounting tabs removed per user request
@@ -79,23 +90,23 @@ module internal_mounts() {
     flora_z = 20;
     
     translate([flora_x, flora_y, flora_z]) {
-        cylinder(h = 8, d = 6);
-        translate([0, 0, 8]) cylinder(h = 3, d = 3); // M3 screw post
+        cylinder(h = 8, d = 6, $fn = 16);
+        translate([0, 0, 8]) cylinder(h = 3, d = 3, $fn = 16);
     }
     
     translate([flora_x + 35, flora_y, flora_z]) {
-        cylinder(h = 8, d = 6);
-        translate([0, 0, 8]) cylinder(h = 3, d = 3);
+        cylinder(h = 8, d = 6, $fn = 16);
+        translate([0, 0, 8]) cylinder(h = 3, d = 3, $fn = 16);
     }
     
     translate([flora_x, flora_y + 35, flora_z]) {
-        cylinder(h = 8, d = 6);
-        translate([0, 0, 8]) cylinder(h = 3, d = 3);
+        cylinder(h = 8, d = 6, $fn = 16);
+        translate([0, 0, 8]) cylinder(h = 3, d = 3, $fn = 16);
     }
     
     translate([flora_x + 35, flora_y + 35, flora_z]) {
-        cylinder(h = 8, d = 6);
-        translate([0, 0, 8]) cylinder(h = 3, d = 3);
+        cylinder(h = 8, d = 6, $fn = 16);
+        translate([0, 0, 8]) cylinder(h = 3, d = 3, $fn = 16);
     }
     
     // Display mounting posts
@@ -106,11 +117,27 @@ module internal_mounts() {
     translate([display_x, display_y, display_z]) {
         cube([50, 8, 5]);
     }
+    
+    // Back panel screw posts
+    translate([15, case_depth - wall_thickness - 8, 15]) {
+        cylinder(h = 8, d = 8, $fn = 16);
+        cylinder(h = 12, d = screw_diameter, $fn = 16);
+    }
+    translate([case_width - 15, case_depth - wall_thickness - 8, 15]) {
+        cylinder(h = 8, d = 8, $fn = 16);
+        cylinder(h = 12, d = screw_diameter, $fn = 16);
+    }
+    translate([15, case_depth - wall_thickness - 8, case_height - 15]) {
+        cylinder(h = 8, d = 8, $fn = 16);
+        cylinder(h = 12, d = screw_diameter, $fn = 16);
+    }
+    translate([case_width - 15, case_depth - wall_thickness - 8, case_height - 15]) {
+        cylinder(h = 8, d = 8, $fn = 16);
+        cylinder(h = 12, d = screw_diameter, $fn = 16);
+    }
 }
 
-// Cable management moved to lid (NPT 1/2 from top)
-
-// Main assembly
+// Main assembly - one piece case with removable back
 module lathe_controller_case() {
     difference() {
         union() {
@@ -122,12 +149,12 @@ module lathe_controller_case() {
     }
 }
 
-// Generate the case and lid
+// Generate the case and removable back panel
 translate([0, 0, 0]) lathe_controller_case();
-translate([case_width + 10, 0, 0]) case_lid();
+translate([case_width + 10, 0, wall_thickness]) back_panel();
 
 // Print settings comments:
 // Layer height: 0.2mm
 // Infill: 20%
 // Supports: None needed
-// Print orientation: Case upright, lid flat
+// Print orientation: Case upright, back panel flat
