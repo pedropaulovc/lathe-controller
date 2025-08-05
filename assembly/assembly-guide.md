@@ -62,6 +62,7 @@ MAX7219 GND --- FLORA GND
 #### VFD Control Circuit (Direct Connections)
 ```
 24V+ ----[Run Switch]-------- VFD Terminal 1 (DI1)
+24V+ ----[Fwd/Rev Toggle]---- VFD Terminal 3 (DI2)
 24V+ ----[Jog Switch]-------- VFD Terminal 4 (DI3)  
 24V+ ----[E-Stop NC]--------- VFD Terminal 6 (DI4)
 
@@ -70,6 +71,12 @@ VFD 10V+ ----[10kΩ Pot]---- VFD AGND
              |
              +-------------- VFD Terminal 2 (AI1+)
 ```
+
+#### Forward/Reverse Toggle Switch Wiring
+The SPDT center-off toggle switch controls motor direction:
+- **Center Position**: No connection (motor stops)
+- **Forward Position**: Switch open (normal forward operation)
+- **Reverse Position**: Switch closed (connects 24V+ to Terminal 3)
 
 ## Step 4: Case Assembly
 
@@ -94,6 +101,7 @@ Set these parameters using VFD keypad:
 - P1-00 = 60 (Maximum frequency 60Hz)
 - P1-01 = 0 (Minimum frequency)
 - P4-01 = 1 (DI1 = Forward run)
+- P4-02 = 2 (DI2 = Reverse run)
 - P4-03 = 7 (DI3 = Jog forward)
 - P4-04 = 9 (DI4 = External fault)
 
@@ -125,6 +133,13 @@ Set these parameters using VFD keypad:
 - Ensure interrupt wheel is properly balanced
 - Check that optical switch cannot contact rotating parts
 - Confirm motor direction matches lathe requirements
+
+### Reverse Operation Safety
+- **Test reverse at low speed first** - Start with minimal RPM
+- **Check chuck type** - Threaded chucks may loosen in reverse
+- **Verify tooling** - Ensure cutting tools are suitable for reverse
+- **Clear workspace** - Remove any items that could be affected by reverse rotation
+- **Always use center position** to stop motor before changing direction
 
 ## Troubleshooting
 - **No RPM display**: Check optical switch gap and wiring

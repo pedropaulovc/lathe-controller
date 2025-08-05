@@ -6,9 +6,10 @@ A custom controller for bench lathes using a Teco EV Micro Drive VFD with integr
 
 - **Speed Control**: 0-10VDC analog speed control via potentiometer
 - **Motor Control**: Run, jog, and emergency stop switches
+- **Direction Control**: Forward/reverse toggle switch with center-off position
 - **Tachometer**: Real-time RPM display with 4-digit 7-segment LED
 - **Compact Design**: 5" wide case with side mounting
-- **Cost Effective**: $90-150 total build cost using VFD internal power supplies
+- **Cost Effective**: $98-162 total build cost using VFD internal power supplies
 
 ## System Architecture
 
