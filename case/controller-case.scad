@@ -125,22 +125,26 @@ module main_case() {
         }
     }
     
-    // Back panel screw posts - extending from back wall
+    // Back panel screw posts with support structure
     for(x = [0, 1]) {
         for(z = [0, 1]) {
             translate([corner_post_offset + x*(case_width - 2*corner_post_offset),
                       case_depth - wall_thickness,
                       corner_post_offset + z*(case_height - 2*corner_post_offset)]) {
-                difference() {
-                    // Post extending from back wall
-                    translate([0, -corner_post_diameter + wall_thickness, 0])
+                // Support boss connecting to back wall
+                hull() {
+                    // Cylinder at the mounting point
+                    translate([0, 0, 0])
                         rotate([90, 0, 0])
                         cylinder(h=corner_post_diameter, d=corner_post_diameter);
-                    // Screw hole
-                    translate([0, -corner_post_diameter + wall_thickness - 1, 0])
-                        rotate([90, 0, 0])
-                        cylinder(h=corner_post_diameter + 2, d=post_hole_diameter);
+                    // Connection to back wall
+                    translate([-corner_post_diameter/2, 0, -corner_post_diameter/2])
+                        cube([corner_post_diameter, 1, corner_post_diameter]);
                 }
+                // Screw hole
+                translate([0, 1, 0])
+                    rotate([90, 0, 0])
+                    cylinder(h=corner_post_diameter + 2, d=post_hole_diameter);
             }
         }
     }
