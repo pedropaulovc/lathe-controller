@@ -19,6 +19,7 @@
 |-----------|-----|-------------|----------------|-----------|
 | Momentary Switch | 1 | Run switch | SPST NO, 5A 115VAC rated | $5-8 |
 | Momentary Switch | 1 | Jog switch | SPST NO, 5A 115VAC rated | $5-8 |
+| Toggle Switch | 1 | Forward/Reverse switch | SPDT, center off, metal body, 1/2" mount | $8-12 |
 | Emergency Stop Switch | 1 | E-stop mushroom button | NC contacts, twist to reset | $15-25 |
 | Potentiometer | 1 | Speed control | 10kΩ linear, 1/4" shaft | $3-5 |
 | Control Knob | 1 | Speed control knob | 1/4" bore, index marking | $2-4 |
@@ -42,7 +43,7 @@
 | HSS Slitting Saw | 1 | Slot cutting tool | 1/8" thick, 3" diameter, 30 teeth |
 | Milling Machine | 1 | Machining equipment | For interrupt wheel fabrication |
 
-## Total Estimated Cost: $90-150
+## Total Estimated Cost: $98-162
 
 ## Notes
 - VFD provides internal 24VDC and 10VDC supplies - no external power needed
