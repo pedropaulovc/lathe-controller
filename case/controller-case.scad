@@ -22,7 +22,7 @@ post_height = 10;
 
 // Back panel screw posts
 corner_post_diameter = 10;
-corner_post_offset = 5;
+corner_post_offset = 10;
 
 // Component positions from center
 display_y_offset = 60;
@@ -53,7 +53,7 @@ module main_case() {
         // Front panel cutouts
         translate([0, 0, case_height/2]) {
             // Display cutout
-            translate([case_width/2, -1, display_y_offset])
+            translate([case_width/2, wall_thickness/2, display_y_offset])
                 cube([display_width, wall_thickness + 2, display_height], center=true);
             
             // Speed control potentiometer
