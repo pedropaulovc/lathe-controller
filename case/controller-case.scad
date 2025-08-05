@@ -22,7 +22,7 @@ post_height = 10;
 
 // Back panel screw posts
 corner_post_diameter = 10;
-corner_post_offset = wall_thickness;
+corner_post_offset = wall_thickness + corner_post_diameter / 2;
 
 // Rounding radius
 corner_radius = 3;

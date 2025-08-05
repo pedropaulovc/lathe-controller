@@ -52,7 +52,7 @@ iso-view.png: $(STL_FILE) $(RENDER_SCAD)
 	$(SCAD) -o $@ --camera=150,-150,200,60,0,90,1000 --imgsize=800,600 $(RENDER_SCAD)
 
 back-detail.png: $(STL_FILE) $(RENDER_SCAD)
-	$(SCAD) -o $@ --camera=-150,150,150,0,0,0,800 --imgsize=800,600 $(RENDER_SCAD)
+	$(SCAD) -o $@ --camera=-150,150,150,60,0,90,800 --imgsize=800,600 $(RENDER_SCAD)
 
 back-detail-1.png: $(STL_FILE) $(RENDER_SCAD)
 	$(SCAD) -o $@ --camera=100,150,120,60,0,90,800 --imgsize=800,600 $(RENDER_SCAD)
