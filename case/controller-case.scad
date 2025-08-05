@@ -73,6 +73,10 @@ module main_case() {
                   case_depth, 
                   case_height - 2*wall_thickness]);
         
+        // Remove back fillet for flush mating with cover
+        translate([0, case_depth - corner_radius, 0])
+            cube([case_width, corner_radius, case_height]);
+
         // Front panel cutouts
         translate([0, 0, case_height/2]) {
             // Display cutout
@@ -163,8 +167,24 @@ module back_panel() {
     panel_height = case_height - 2*wall_thickness;
     
     difference() {
-        // Main panel
-        cube([panel_width, wall_thickness, panel_height]);
+        // Main panel with rounded back corners
+        hull() {
+            // Front face (flat)
+            cube([panel_width, 0.1, panel_height]);
+            
+            // Back face (rounded)
+            translate([0, wall_thickness, 0])
+            hull() {
+                for (i = [0, 1]) {
+                    for (j = [0, 1]) {
+                        translate([corner_radius + i*(panel_width - 2*corner_radius), 
+                                   0, 
+                                   corner_radius + j*(panel_height - 2*corner_radius)])
+                            sphere(r=corner_radius);
+                    }
+                }
+            }
+        }
         
         // Mounting holes
         for(x = [0, 1]) {
