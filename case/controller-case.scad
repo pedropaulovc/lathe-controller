@@ -13,6 +13,7 @@ display_height = 19;
 pot_diameter = 16;
 button_diameter = 11.9;
 estop_diameter = 22;
+toggle_switch_diameter = 12.7;  // 1/2" toggle switch
 cable_entry_diameter = 21.34;  // NPT 1/2
 
 // Mounting post dimensions
@@ -35,6 +36,8 @@ run_button_x_offset = -30;
 run_button_y_offset = 0;
 jog_button_x_offset = 30;
 jog_button_y_offset = 0;
+toggle_switch_x_offset = -35;
+toggle_switch_y_offset = 35;
 estop_y_offset = -50;
 
 // FLORA mounting positions
@@ -102,6 +105,11 @@ module main_case() {
             translate([case_width/2, -1, estop_y_offset])
                 rotate([-90, 0, 0])
                 cylinder(h=wall_thickness + 2, d=estop_diameter);
+            
+            // Forward/Reverse toggle switch
+            translate([case_width/2 + toggle_switch_x_offset, -1, toggle_switch_y_offset])
+                rotate([-90, 0, 0])
+                cylinder(h=wall_thickness + 2, d=toggle_switch_diameter);
         }
         
         // Top cable entry
