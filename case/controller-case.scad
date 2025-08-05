@@ -1,35 +1,51 @@
 // Lathe Controller Case - 5" wide max 8" tall
-// Front controls, side mounting design
+// Front controls, top cable entry, with lid
 
 // Case dimensions
 case_width = 127;      // 5 inches = 127mm
 case_height = 180;     // ~7 inches, under 8" limit  
 case_depth = 80;       // 3.15 inches depth
 wall_thickness = 3;
+lid_thickness = 3;
 
 // Control component dimensions
 display_width = 50;
 display_height = 19;
 pot_diameter = 16;
-switch_diameter = 12;
-estop_diameter = 22;
+pushbutton_diameter = 11.9;  // 32-P-970046-01 pushbuttons
+estop_diameter = 22;         // Round emergency stop
 
-// Mounting tab dimensions
-tab_width = 20;
-tab_height = 40;
-mounting_hole_diameter = 6;  // M5 mounting holes
+// NPT 1/2 cable entry
+npt_half_diameter = 21.34;   // NPT 1/2 thread diameter
 
 module case_body() {
     difference() {
         // Main case body
         cube([case_width, case_depth, case_height]);
         
-        // Internal cavity
+        // Internal cavity (open top for lid)
         translate([wall_thickness, wall_thickness, wall_thickness])
             cube([case_width - 2*wall_thickness, 
                   case_depth - 2*wall_thickness, 
-                  case_height - wall_thickness]);
+                  case_height - wall_thickness + 1]);
     }
+}
+
+module case_lid() {
+    difference() {
+        // Lid base
+        cube([case_width, case_depth, lid_thickness]);
+        
+        // NPT 1/2 cable entry hole
+        translate([case_width/2, case_depth/2, -1])
+            cylinder(h = lid_thickness + 2, d = npt_half_diameter);
+    }
+    
+    // Lid lip for snug fit
+    translate([wall_thickness + 1, wall_thickness + 1, -2])
+        cube([case_width - 2*wall_thickness - 2, 
+              case_depth - 2*wall_thickness - 2, 
+              2]);
 }
 
 module front_panel_cutouts() {
@@ -41,32 +57,20 @@ module front_panel_cutouts() {
     translate([case_width - 35, -1, case_height - 100])
         cylinder(h = wall_thickness + 2, d = pot_diameter);
     
-    // Run switch (middle left)
+    // Run pushbutton 32-P-970046-01 (middle left)
     translate([25, -1, case_height/2 + 20])
-        cylinder(h = wall_thickness + 2, d = switch_diameter);
+        cylinder(h = wall_thickness + 2, d = pushbutton_diameter);
     
-    // Jog switch (middle right)
+    // Jog pushbutton 32-P-970046-01 (middle right)
     translate([case_width - 25, -1, case_height/2 + 20])
-        cylinder(h = wall_thickness + 2, d = switch_diameter);
+        cylinder(h = wall_thickness + 2, d = pushbutton_diameter);
     
-    // Emergency stop (lower center)
+    // Emergency stop (lower center) - round
     translate([case_width/2, -1, 40])
         cylinder(h = wall_thickness + 2, d = estop_diameter);
 }
 
-module side_mounting_tabs() {
-    // Left mounting tab
-    translate([-tab_width, case_depth/2 - tab_height/2, case_height/2 - tab_height/2]) {
-        difference() {
-            cube([tab_width, tab_height, wall_thickness]);
-            // Mounting holes
-            translate([tab_width/2, tab_height/4, -1])
-                cylinder(h = wall_thickness + 2, d = mounting_hole_diameter);
-            translate([tab_width/2, 3*tab_height/4, -1])
-                cylinder(h = wall_thickness + 2, d = mounting_hole_diameter);
-        }
-    }
-}
+// Side mounting tabs removed per user request
 
 module internal_mounts() {
     // FLORA mounting posts
@@ -104,35 +108,26 @@ module internal_mounts() {
     }
 }
 
-module cable_management() {
-    // Cable entry hole (bottom)
-    translate([case_width/2, case_depth/2, -1])
-        cylinder(h = wall_thickness + 2, d = 20);
-    
-    // Cable strain relief groove
-    translate([case_width/2 - 10, case_depth/2 - 10, 0])
-        cube([20, 20, 5]);
-}
+// Cable management moved to lid (NPT 1/2 from top)
 
 // Main assembly
 module lathe_controller_case() {
     difference() {
         union() {
             case_body();
-            side_mounting_tabs();
             internal_mounts();
         }
         
         front_panel_cutouts();
-        cable_management();
     }
 }
 
-// Generate the case
-lathe_controller_case();
+// Generate the case and lid
+translate([0, 0, 0]) lathe_controller_case();
+translate([case_width + 10, 0, 0]) case_lid();
 
 // Print settings comments:
 // Layer height: 0.2mm
 // Infill: 20%
 // Supports: None needed
-// Print orientation: Upright as designed
+// Print orientation: Case upright, lid flat
