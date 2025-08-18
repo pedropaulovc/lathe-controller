@@ -13,41 +13,32 @@ This document summarizes the complete wiring configuration for the lathe control
 
 **Hardware Setup**: VFD switch **SW1 = PNP** (Source Mode) for all digital inputs
 
-### 1. Main On/Off Switch (S7 - Terminal 10)
-- **Type**: SPST maintained contact
-- **Function**: Master enable/disable
-- **Wiring**: Terminal 3 (24V) → Switch → Terminal 10 (S7)
-- **Signal Logic**: Switch closed = 24V = Signal HIGH = Enabled
-- **VFD Parameter**: F15 = 019 (Terminal 10 as digital input S7)
+### 1. Main On/Off Switch (S1 - Terminal 4) - **RUNS MOTOR**
+- **Type**: SPST maintained contact switch
+- **Function**: **Direct motor run/stop control**
+- **Wiring**: Terminal 3 (24V) → Switch → Terminal 4 (S1)
+- **Signal Logic**: Switch closed = 24V = Signal HIGH = **Motor RUNS**
+- **Operation**: **Motor starts when ON, stops when OFF**
+- **VFD Parameter**: F11 = 000 (S1 = Forward run)
 
 ### 2. E-Stop Switch (S4 - Terminal 7) 
 - **Type**: NC (Normally Closed) emergency stop
 - **Function**: External Emergency Stop trigger
 - **Normal**: Switch closed, 24V on Terminal 7 → Signal HIGH = Normal operation
 - **Emergency**: Switch opens, 0V on Terminal 7 → Signal LOW = Emergency stop
-- **VFD Parameter**: F14 = 009 (S4 = External Emergency Stop)
+- **VFD Parameter**: F14 = 006 (S4 = External Emergency Stop)
 - **Response**: Immediate stop using C12 deceleration time, displays "E.S"
 
-### 3. Run Switch (S1 - Terminal 4)
-- **Function**: Forward run command
-- **Signal Logic**: Switch closed = 24V = Signal HIGH = Run enabled
-- **VFD Parameter**: F11 = 001 (S1 = Forward run)
-
-### 4. Forward/Reverse Toggle (S2 - Terminal 5)
+### 3. Forward/Reverse Toggle (S2 - Terminal 5)
 - **Type**: SPDT metal toggle switch
 - **Function**: Direction control
 - **Signal Logic**: Switch closed = 24V = Signal HIGH = Reverse mode
-- **VFD Parameter**: F12 = 002 (S2 = Reverse run)
-
-### 5. Jog Switch (S3 - Terminal 6)
-- **Function**: Jog forward
-- **Signal Logic**: Switch closed = 24V = Signal HIGH = Jog active
-- **VFD Parameter**: F13 = 007 (S3 = Jog forward)
+- **VFD Parameter**: F12 = 001 (S2 = Reverse run)
 
 ## Safety Features
-1. **Dual Stop Protection**: Both E-Stop (emergency) and On/Off (planned shutdown)
-2. **NC E-Stop**: Fail-safe design - any wire break stops motor
-3. **Master Enable**: On/Off switch must be enabled for any operation
+1. **Emergency Stop**: NC E-Stop provides immediate motor shutdown
+2. **NC E-Stop**: Fail-safe design - any wire break stops motor  
+3. **Direct Control**: On/Off switch provides direct motor start/stop
 4. **VFD Fault Response**: Immediate motor stop on E-Stop activation
 
 ## Flora Tachometer Integration
@@ -69,14 +60,14 @@ This document summarizes the complete wiring configuration for the lathe control
 
 ### Digital Input Wiring:
 - [ ] E-Stop wired as NC configuration to Terminal 7 (S4)
-- [ ] On/Off switch wired to Terminal 10 (S7)  
-- [ ] Run switch wired to Terminal 4 (S1)
+- [ ] **Main On/Off switch wired to Terminal 4 (S1) - RUNS MOTOR**
 - [ ] Forward/Reverse toggle wired to Terminal 5 (S2)
-- [ ] Jog switch wired to Terminal 6 (S3)
 
 ### VFD Programming:
 - [ ] VFD F-parameters programmed per specification
-- [ ] Digital input functions configured (F11-F15)
+- [ ] F11 = 000 (S1 = Forward run - main on/off switch)
+- [ ] F12 = 001 (S2 = Reverse run - direction control) 
+- [ ] F14 = 006 (S4 = External Emergency Stop)
 - [ ] Control mode parameters set (F04, F05, F06)
 
 ### System Verification:

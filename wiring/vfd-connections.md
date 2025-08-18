@@ -16,11 +16,9 @@
 - **Connection**: 10kΩ potentiometer with 0-10V scaling circuit
 
 ### Digital Input Functions
-- **Terminal 4 (S1)**: Forward Run (connect Run switch here)
+- **Terminal 4 (S1)**: Forward Run (connect On/Off switch here for main run control)
 - **Terminal 5 (S2)**: Reverse Run (connect Forward/Reverse toggle switch here)
-- **Terminal 6 (S3)**: Jog Forward (connect Jog switch here)
 - **Terminal 7 (S4)**: External Fault/E-Stop (connect E-Stop NC contacts - normally closed)
-- **Terminal 10 (AIN/S7)**: Main On/Off Switch (when used as digital input S7)
 
 ### Digital Input Wiring
 All digital inputs (S1-S4, S7) are isolated and support two signal modes controlled by **hardware switch SW1**:
@@ -42,10 +40,8 @@ All digital inputs (S1-S4, S7) are isolated and support two signal modes control
 
 ### Switch Connections (SW1 = PNP Mode)
 ```
-Terminal 3 (24V) ----[On/Off Switch]----- Terminal 10 (S7)    (Main power enable)
-Terminal 3 (24V) ----[Run Switch]-------- Terminal 4 (S1)     (Forward run)
+Terminal 3 (24V) ----[On/Off Switch]----- Terminal 4 (S1)     (Main run control)
 Terminal 3 (24V) ----[Fwd/Rev Toggle]---- Terminal 5 (S2)     (Reverse run)
-Terminal 3 (24V) ----[Jog Switch]-------- Terminal 6 (S3)     (Jog forward)
 Terminal 3 (24V) ----[E-Stop NC]--------- Terminal 7 (S4)     (External fault - NC)
 ```
 
@@ -65,12 +61,12 @@ The E-Stop uses a **normally closed (NC)** switch configuration with **SW1 = PNP
 - **Reset**: E-Stop must be reset (closed) AND run command cycled before VFD can restart
 
 ### Main On/Off Switch Configuration
-The main on/off switch provides master enable/disable control:
-- **Switch Type**: SPST (Single Pole, Single Throw) momentary or maintained contact
-- **ON Position**: Switch closed, 24V flows from Terminal 3 to Terminal 10 (S7), enables VFD operation
-- **OFF Position**: Switch open, removes 24V from Terminal 10 (S7), disables VFD
-- **Function**: Master enable - all other controls require this switch to be ON
-- **Safety**: Provides additional safety layer beyond E-Stop for planned shutdowns
+The main on/off switch provides direct run/stop control:
+- **Switch Type**: SPST (Single Pole, Single Throw) maintained contact switch
+- **ON Position**: Switch closed, 24V flows from Terminal 3 to Terminal 4 (S1), **starts motor**
+- **OFF Position**: Switch open, removes 24V from Terminal 4 (S1), **stops motor**
+- **Function**: Direct motor start/stop control
+- **Operation**: Motor runs when switch is ON, stops when switch is OFF
 
 ### Forward/Reverse Toggle Switch Wiring
 The forward/reverse control uses a SPDT (single pole, double throw) metal toggle switch:
@@ -94,11 +90,9 @@ Set these parameters for proper operation:
 
 #### Software Parameters:
 - F15 = 017 or 018 (Terminal 10 as analog input AIN for speed control)
-- F11 = 001 (S1 = Forward run)
-- F12 = 002 (S2 = Reverse run) 
-- F13 = 007 (S3 = Jog forward)
-- F14 = 009 (S4 = External Emergency Stop)
-- When Terminal 10 used as S7: F15 = 019, then set S7 function
+- F11 = 000 (S1 = Forward run - main on/off switch)
+- F12 = 001 (S2 = Reverse run - direction control)
+- F14 = 006 (S4 = External Emergency Stop)
 
 #### Control Mode Parameters:
 - F04 = 001 (External terminal control via TM2)
