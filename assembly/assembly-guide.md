@@ -37,7 +37,7 @@
 ## Step 3: Electronics Assembly
 
 ### FLORA Preparation
-1. Install Arduino IDE and LedControl library
+1. Install Arduino IDE and TM1637Display library
 2. Upload `flora-tachometer.ino` firmware to FLORA
 3. Test display functionality before final assembly
 
@@ -46,18 +46,19 @@ Follow wiring diagrams in `/wiring/` directory:
 
 #### Tachometer Circuit (FLORA)
 ```
-TCST2103 Pin 1 (Anode) ---- FLORA 3.3V
-TCST2103 Pin 2 (Cathode) -- 330Ω resistor -- FLORA GND
-TCST2103 Pin 3 (Collector) - 10kΩ pullup -- FLORA 3.3V
-TCST2103 Pin 4 (Emitter) -- FLORA GND
-TCST2103 Signal Output --- FLORA D2
+IR Sensor VCC ---- FLORA 3.3V or 5V
+IR Sensor GND ---- FLORA GND
+IR Sensor OUT ---- FLORA D2 (set as INPUT in firmware)
 
-MAX7219 CS ---- FLORA D10
-MAX7219 DIN --- FLORA D11  
-MAX7219 CLK --- FLORA D13
-MAX7219 VCC --- FLORA 3.3V
-MAX7219 GND --- FLORA GND
+TM1637 VCC ---- FLORA 3.3V or 5V
+TM1637 GND ---- FLORA GND
+TM1637 CLK ---- FLORA D3
+TM1637 DIO ---- FLORA D4
 ```
+
+**Critical Setup Notes:**
+- IR sensor pin D2 MUST be configured as INPUT mode in firmware setup()
+- Both TM1637 and IR sensor support 3.3V or 5V operation
 
 #### VFD Control Circuit (Direct Connections)
 ```
@@ -82,9 +83,9 @@ The SPDT center-off toggle switch controls motor direction:
 
 ### Install Components
 1. Mount FLORA to internal posts using M3 screws
-2. Install 7-segment display in front panel cutout
+2. Install TM1637 4-digit display in front panel cutout
 3. Install switches and potentiometer in front panel
-4. Secure optical switch near interrupt wheel mounting location
+4. Secure IR sensor near interrupt wheel mounting location (1-5mm gap)
 
 ### Wiring in Case
 1. Route power wires through bottom cable entry
@@ -118,20 +119,21 @@ Set these parameters using VFD keypad:
 2. **Switch Test**: Test run, jog, and e-stop functions
 3. **Speed Test**: Verify potentiometer controls motor speed smoothly
 4. **Tachometer Test**: 
-   - Manually rotate spindle to verify pulse detection
+   - Manually rotate spindle to verify IR sensor pulse detection
    - Check RPM accuracy at known speeds
    - Verify display updates every 250ms
+   - Confirm IR sensor INPUT mode is properly set in firmware
 
 ### Calibration
 1. Use external tachometer to verify RPM accuracy
 2. Adjust `PULSES_PER_REVOLUTION` in firmware if needed
-3. Fine-tune optical switch gap for reliable operation
+3. Fine-tune IR sensor gap (1-5mm optimal) for reliable operation
 
 ## Safety Reminders
 - **ALWAYS** test emergency stop before operation
 - Verify all electrical connections are secure
 - Ensure interrupt wheel is properly balanced
-- Check that optical switch cannot contact rotating parts
+- Check that IR sensor cannot contact rotating parts
 - Confirm motor direction matches lathe requirements
 
 ### Reverse Operation Safety
@@ -142,7 +144,8 @@ Set these parameters using VFD keypad:
 - **Always use center position** to stop motor before changing direction
 
 ## Troubleshooting
-- **No RPM display**: Check optical switch gap and wiring
+- **No RPM display**: Check IR sensor gap (1-5mm), wiring, and INPUT mode setting
 - **Erratic readings**: Reduce electrical noise, check shielding
 - **Motor won't start**: Verify VFD parameters and switch connections
 - **Incorrect speed**: Check potentiometer wiring and VFD settings
+- **IR sensor not detecting**: Verify 3.3V/5V power, check gap distance, confirm INPUT mode in firmware
