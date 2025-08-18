@@ -3,7 +3,7 @@
 const int IR_SENSOR_PIN = 6;       // IR sensor output pin (set as INPUT)
 const int TM1637_CLK_PIN = 9;      // TM1637 Clock pin
 const int TM1637_DIO_PIN = 10;     // TM1637 Data pin
-const int ONBOARD_LED_PIN = 13;    // Onboard LED pin (standard Arduino pin)
+const int ONBOARD_LED_PIN = 7;     // LED pin
 
 TM1637Display display(TM1637_CLK_PIN, TM1637_DIO_PIN);
 
