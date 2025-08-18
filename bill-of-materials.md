@@ -4,15 +4,13 @@
 | Component | Qty | Description | Specifications | Est. Cost |
 |-----------|-----|-------------|----------------|-----------|
 | Adafruit FLORA | 1 | Microcontroller board | ATmega32u4, 3.3V, USB programmable | $15-20 |
-| 4-Digit 7-Segment Display | 1 | LED display with driver | MAX7219 driver, 0.56" digits, red | $8-12 |
+| TM1637 4-Digit Display | 1 | LED display module | TM1637 driver, 0.36" digits, red, CLK/DIO | $3-6 |
 
 ## Tachometer Components
 | Component | Qty | Description | Specifications | Est. Cost |
 |-----------|-----|-------------|----------------|-----------|
-| Slotted Optical Switch | 1 | Infrared sensor | TCST2103 or equivalent | $3-5 |
+| IR Sensor Module | 1 | Infrared sensor | 3.3V-5V supply, digital OUT pin | $2-4 |
 | Brass Round Stock | 1 | Interrupt wheel material | 1/8" thick, 2-3" diameter, 360 brass | $15-25 |
-| Resistor | 1 | Current limiting | 330Ω, 1/4W | $0.10 |
-| Resistor | 1 | Pull-up resistor | 10kΩ, 1/4W | $0.10 |
 
 ## Control Components
 | Component | Qty | Description | Specifications | Est. Cost |
@@ -43,11 +41,14 @@
 | HSS Slitting Saw | 1 | Slot cutting tool | 1/8" thick, 3" diameter, 30 teeth |
 | Milling Machine | 1 | Machining equipment | For interrupt wheel fabrication |
 
-## Total Estimated Cost: $98-162
+## Total Estimated Cost: $88-148
 
 ## Notes
 - VFD provides internal 24VDC and 10VDC supplies - no external power needed
 - All switches connect directly to VFD terminals using internal 24V supply
 - FLORA powered via USB during programming, can use VFD 24V in final installation
+- TM1637 display module is more cost-effective than MAX7219 display ($3-6 vs $8-12)
+- IR sensor module includes built-in signal conditioning (no external resistors needed)
 - HSS slitting saw creates 60 slots at 6° indexing in brass wheel
 - Case design accommodates 5" width with front-mounted controls
+- **Arduino Setup**: IR sensor pin must be configured as INPUT mode in firmware
