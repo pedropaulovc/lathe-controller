@@ -8,7 +8,7 @@ IR Sensor Pin    Connection           Notes
 -------------    -----------          -----
 +5V/VCC         ---- 3.3V/5V (FLORA) Power supply 3.3V-5V
 GND             ---- GND (FLORA)      Ground connection
-OUT             ---- D2 (FLORA)       Signal output to interrupt pin
+OUT             ---- D6 (FLORA)       Signal output pin
 ```
 
 **Important Arduino Setup Notes:**
@@ -17,9 +17,9 @@ OUT             ---- D2 (FLORA)       Signal output to interrupt pin
 - 51 series MCUs can be used directly without input/output mode configuration
 
 ### FLORA Connections
-- **D2**: IR sensor signal output (interrupt capable pin, set as INPUT)
-- **D3**: TM1637 Clock pin (CLK)
-- **D4**: TM1637 Data pin (DIO)
+- **D6**: IR sensor signal output (set as INPUT)
+- **D9**: TM1637 Clock pin (CLK)
+- **D10**: TM1637 Data pin (DIO)
 - **3.3V/5V**: Power for IR sensor (supports both voltages)
 - **GND**: Common ground
 
@@ -27,8 +27,8 @@ OUT             ---- D2 (FLORA)       Signal output to interrupt pin
 ```
 FLORA Pin    TM1637 Pin     Function
 ---------    ----------     --------
-D3           CLK            Clock signal
-D4           DIO            Data I/O
+D9           CLK            Clock signal
+D10          DIO            Data I/O
 5V/3.3V      VCC            Power (3.3V-5V)
 GND          GND            Ground
 ```
