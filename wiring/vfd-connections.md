@@ -23,12 +23,24 @@
 - **Terminal 10 (AIN/S7)**: Main On/Off Switch (when used as digital input S7)
 
 ### Digital Input Wiring
-All digital inputs (S1-S4, S7) are isolated and can accept:
-- 24VDC (using Terminal 3 supply when SW1 set to PNP mode)
-- NPN or PNP logic (controlled by SW1 setting)
-- Dry contacts (switches)
+All digital inputs (S1-S4, S7) are isolated and support two signal modes controlled by **hardware switch SW1**:
 
-### Switch Connections
+#### SW1 Setting (Digital Signal Selection):
+- **SW1 = PNP (Source Mode)**: Active HIGH logic
+  - Terminal 3 (24V) provides common for inputs S1-S4
+  - Signal ON = 24V present, Signal OFF = 0V
+  - Wiring: `24V+ → [Switch] → S1-S4 input`
+  
+- **SW1 = NPN (Sink Mode)**: Active LOW logic  
+  - Terminal 8 (COM) provides common for inputs S1-S4
+  - Signal ON = 0V (to COM), Signal OFF = floating/24V
+  - Wiring: `S1-S4 input → [Switch] → COM (0V)`
+
+#### Recommended Configuration:
+- **Use SW1 = PNP mode** for simpler wiring with switches
+- All control switches connect between Terminal 3 (24V) and input terminals
+
+### Switch Connections (SW1 = PNP Mode)
 ```
 Terminal 3 (24V) ----[On/Off Switch]----- Terminal 10 (S7)    (Main power enable)
 Terminal 3 (24V) ----[Run Switch]-------- Terminal 4 (S1)     (Forward run)
@@ -37,12 +49,20 @@ Terminal 3 (24V) ----[Jog Switch]-------- Terminal 6 (S3)     (Jog forward)
 Terminal 3 (24V) ----[E-Stop NC]--------- Terminal 7 (S4)     (External fault - NC)
 ```
 
+**IMPORTANT**: Set VFD hardware switch **SW1 = PNP** for the above wiring configuration.
+
 ### E-Stop Switch Configuration
-The E-Stop uses a **normally closed (NC)** switch configuration:
-- **Normal Operation**: E-Stop switch is closed, 24V flows from Terminal 3 to Terminal 7 (S4)
-- **Emergency Stop**: E-Stop switch opens, removing 24V from Terminal 7 (S4)
-- **VFD Response**: Loss of signal on S4 triggers external fault, immediately stops motor
-- **Reset**: E-Stop must be reset (closed) before VFD can restart
+The E-Stop uses a **normally closed (NC)** switch configuration with **SW1 = PNP mode**:
+
+#### Signal Logic (with SW1 = PNP):
+- **Normal Operation**: E-stop switch closed → 24V on Terminal 7 (S4) → **Signal HIGH = Normal**
+- **Emergency Stop**: E-stop switch opens → 0V on Terminal 7 (S4) → **Signal LOW = Emergency**
+
+#### VFD Response:
+- **Signal Loss**: When S4 configured as F14=009 (External Emergency Stop), loss of 24V signal triggers immediate motor stop
+- **Deceleration**: Uses C12 (2nd deceleration time) regardless of F09 setting  
+- **Display**: Shows "E.S" flashing
+- **Reset**: E-Stop must be reset (closed) AND run command cycled before VFD can restart
 
 ### Main On/Off Switch Configuration
 The main on/off switch provides master enable/disable control:
@@ -67,12 +87,23 @@ Terminal 9 (10V) ----[10kΩ Pot]---- Terminal 8 (COM)
 
 ### VFD Programming Parameters
 Set these parameters for proper operation:
-- F15 = 017 or 018 (Terminal 10 as analog input AIN)
+
+#### Hardware Configuration:
+- **SW1 = PNP** (Digital Signal Selection - Source Mode)
+- **SW2 = V** (Analog Control Selection - 0-10V mode for speed potentiometer)
+
+#### Software Parameters:
+- F15 = 017 or 018 (Terminal 10 as analog input AIN for speed control)
 - F11 = 001 (S1 = Forward run)
 - F12 = 002 (S2 = Reverse run) 
 - F13 = 007 (S3 = Jog forward)
-- F14 = 009 (S4 = External fault)
-- When Terminal 10 used as S7: F15 = 019, then set function for S7
+- F14 = 009 (S4 = External Emergency Stop)
+- When Terminal 10 used as S7: F15 = 019, then set S7 function
+
+#### Control Mode Parameters:
+- F04 = 001 (External terminal control via TM2)
+- F05 = 002 (Frequency controlled by Terminal 10 analog input)
+- F06 = 000 or 001 (External control operation mode)
 
 ### Safety Notes for Reverse Operation
 - **WARNING**: Ensure the lathe chuck and workpiece are suitable for reverse rotation
