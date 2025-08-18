@@ -16,8 +16,8 @@
 - **Connection**: 10kΩ potentiometer with 0-10V scaling circuit
 
 ### Digital Input Functions
-- **Terminal 4 (S1)**: Forward Run (connect On/Off switch here for main run control)
-- **Terminal 5 (S2)**: Reverse Run (connect Forward/Reverse toggle switch here)
+- **Terminal 4 (S1)**: Forward Run (controlled by Forward/Reverse switch)
+- **Terminal 5 (S2)**: Reverse Run (controlled by Forward/Reverse switch)
 - **Terminal 7 (S4)**: External Fault/E-Stop (connect E-Stop NC contacts - normally closed)
 
 ### Digital Input Wiring
@@ -40,10 +40,16 @@ All digital inputs (S1-S4, S7) are isolated and support two signal modes control
 
 ### Switch Connections (SW1 = PNP Mode)
 ```
-Terminal 3 (24V) ----[On/Off Switch]----- Terminal 4 (S1)     (Main run control)
-Terminal 3 (24V) ----[Fwd/Rev Toggle]---- Terminal 5 (S2)     (Reverse run)
+Terminal 3 (24V) ----[On/Off Switch]----+---- 24V_SWITCHED
+                                         |
+24V_SWITCHED ----[Fwd/Rev SPDT]----+---- Terminal 4 (S1)     (Forward run)
+                                   |
+                                   +---- Terminal 5 (S2)     (Reverse run)
+
 Terminal 3 (24V) ----[E-Stop NC]--------- Terminal 7 (S4)     (External fault - NC)
 ```
+
+**Master Enable Wiring:** On/Off switch controls 24V supply to both forward and reverse inputs.
 
 **IMPORTANT**: Set VFD hardware switch **SW1 = PNP** for the above wiring configuration.
 
@@ -60,19 +66,20 @@ The E-Stop uses a **normally closed (NC)** switch configuration with **SW1 = PNP
 - **Display**: Shows "E.S" flashing
 - **Reset**: E-Stop must be reset (closed) AND run command cycled before VFD can restart
 
-### Main On/Off Switch Configuration
-The main on/off switch provides direct run/stop control:
+### Main On/Off Switch Configuration  
+The main on/off switch provides **master enable** control for both forward and reverse:
 - **Switch Type**: SPST (Single Pole, Single Throw) maintained contact switch
-- **ON Position**: Switch closed, 24V flows from Terminal 3 to Terminal 4 (S1), **starts motor**
-- **OFF Position**: Switch open, removes 24V from Terminal 4 (S1), **stops motor**
-- **Function**: Direct motor start/stop control
-- **Operation**: Motor runs when switch is ON, stops when switch is OFF
+- **ON Position**: Switch closed, allows 24V to reach Forward/Reverse switch
+- **OFF Position**: Switch open, cuts off 24V to both S1 and S2, **motor stops regardless of direction switch**
+- **Function**: Master enable - Forward/Reverse switch only works when On/Off is ON
+- **Safety**: Complete motor disable when switched OFF
 
 ### Forward/Reverse Toggle Switch Wiring
-The forward/reverse control uses a SPDT (single pole, double throw) metal toggle switch:
-- **Center Position**: Motor stops (neutral)
-- **Forward Position**: Normal forward rotation (switch open, S2 not activated)
-- **Reverse Position**: Reverse rotation (switch closed, 24V connected to Terminal 5 (S2))
+The forward/reverse control uses a **SPDT (Single Pole, Double Throw)** toggle switch:
+- **Forward Position**: 24V_SWITCHED connected to Terminal 4 (S1) → Forward rotation
+- **Reverse Position**: 24V_SWITCHED connected to Terminal 5 (S2) → Reverse rotation  
+- **Operation**: Switch directs the 24V supply (when On/Off is ON) to either forward or reverse input
+- **Safety**: No effect when On/Off switch is OFF (no 24V available)
 
 ### Speed Potentiometer Circuit
 ```
@@ -90,8 +97,8 @@ Set these parameters for proper operation:
 
 #### Software Parameters:
 - F15 = 017 or 018 (Terminal 10 as analog input AIN for speed control)
-- F11 = 000 (S1 = Forward run - main on/off switch)
-- F12 = 001 (S2 = Reverse run - direction control)
+- F11 = 000 (S1 = Forward run)
+- F12 = 001 (S2 = Reverse run) 
 - F14 = 006 (S4 = External Emergency Stop)
 
 #### Control Mode Parameters:

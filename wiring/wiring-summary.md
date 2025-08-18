@@ -13,27 +13,30 @@ This document summarizes the complete wiring configuration for the lathe control
 
 **Hardware Setup**: VFD switch **SW1 = PNP** (Source Mode) for all digital inputs
 
-### 1. Main On/Off Switch (S1 - Terminal 4) - **RUNS MOTOR**
+### 1. Main On/Off Switch - **MASTER ENABLE**
 - **Type**: SPST maintained contact switch
-- **Function**: **Direct motor run/stop control**
-- **Wiring**: Terminal 3 (24V) → Switch → Terminal 4 (S1)
-- **Signal Logic**: Switch closed = 24V = Signal HIGH = **Motor RUNS**
-- **Operation**: **Motor starts when ON, stops when OFF**
-- **VFD Parameter**: F11 = 000 (S1 = Forward run)
+- **Function**: **Master enable for motor operation**
+- **Wiring**: Terminal 3 (24V) → On/Off Switch → 24V_SWITCHED (feeds Forward/Reverse switch)
+- **Signal Logic**: Switch closed = 24V available to direction switch
+- **Operation**: **Must be ON for motor to run, OFF stops motor regardless of direction switch**
+- **Safety**: Complete motor disable when OFF
 
-### 2. E-Stop Switch (S4 - Terminal 7) 
+### 2. Forward/Reverse Toggle Switch - **DIRECTION CONTROL**
+- **Type**: SPDT (Single Pole, Double Throw) toggle switch
+- **Function**: Direction selection
+- **Input**: 24V_SWITCHED (from On/Off switch)
+- **Forward Position**: 24V_SWITCHED → Terminal 4 (S1) → Forward rotation
+- **Reverse Position**: 24V_SWITCHED → Terminal 5 (S2) → Reverse rotation
+- **VFD Parameters**: F11 = 000 (S1 = Forward run), F12 = 001 (S2 = Reverse run)
+- **Operation**: Only works when On/Off switch is ON
+
+### 3. E-Stop Switch (S4 - Terminal 7) 
 - **Type**: NC (Normally Closed) emergency stop
 - **Function**: External Emergency Stop trigger
 - **Normal**: Switch closed, 24V on Terminal 7 → Signal HIGH = Normal operation
 - **Emergency**: Switch opens, 0V on Terminal 7 → Signal LOW = Emergency stop
 - **VFD Parameter**: F14 = 006 (S4 = External Emergency Stop)
 - **Response**: Immediate stop using C12 deceleration time, displays "E.S"
-
-### 3. Forward/Reverse Toggle (S2 - Terminal 5)
-- **Type**: SPDT metal toggle switch
-- **Function**: Direction control
-- **Signal Logic**: Switch closed = 24V = Signal HIGH = Reverse mode
-- **VFD Parameter**: F12 = 001 (S2 = Reverse run)
 
 ## Safety Features
 1. **Emergency Stop**: NC E-Stop provides immediate motor shutdown
@@ -60,13 +63,15 @@ This document summarizes the complete wiring configuration for the lathe control
 
 ### Digital Input Wiring:
 - [ ] E-Stop wired as NC configuration to Terminal 7 (S4)
-- [ ] **Main On/Off switch wired to Terminal 4 (S1) - RUNS MOTOR**
-- [ ] Forward/Reverse toggle wired to Terminal 5 (S2)
+- [ ] **On/Off switch wired as master enable (feeds 24V to direction switch)**
+- [ ] **SPDT Forward/Reverse toggle switch:**
+  - [ ] Forward position → Terminal 4 (S1)
+  - [ ] Reverse position → Terminal 5 (S2)
 
 ### VFD Programming:
 - [ ] VFD F-parameters programmed per specification
-- [ ] F11 = 000 (S1 = Forward run - main on/off switch)
-- [ ] F12 = 001 (S2 = Reverse run - direction control) 
+- [ ] F11 = 000 (S1 = Forward run)
+- [ ] F12 = 001 (S2 = Reverse run) 
 - [ ] F14 = 006 (S4 = External Emergency Stop)
 - [ ] Control mode parameters set (F04, F05, F06)
 
