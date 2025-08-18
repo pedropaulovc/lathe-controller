@@ -15,7 +15,7 @@ unsigned long currentTime = 0;
 float currentRPM = 0.0;
 
 const unsigned long DISPLAY_UPDATE_INTERVAL = 250;  // 250ms update rate
-const unsigned long TIMEOUT_PERIOD = 2000;         // 2 seconds timeout for zero RPM
+const unsigned long TIMEOUT_PERIOD = 250;          // 0.25 seconds timeout for zero RPM
 const int PULSES_PER_REVOLUTION = 60;               // 60 slots in interrupt wheel
 
 void setup() {
@@ -92,14 +92,7 @@ void displayRPM(float rpm) {
 }
 
 void manageLED() {
-  // Check if we're receiving pulses (sensor is active)
-  bool sensorActive = (currentTime - lastPulseTime < TIMEOUT_PERIOD);
-  
-  if (sensorActive) {
-    // Keep LED solid on when sensor is detecting
-    digitalWrite(ONBOARD_LED_PIN, HIGH);
-  } else {
-    // Turn off LED when no sensor activity
-    digitalWrite(ONBOARD_LED_PIN, LOW);
-  }
+  // Directly read sensor state and output to LED
+  bool sensorState = digitalRead(IR_SENSOR_PIN);
+  digitalWrite(ONBOARD_LED_PIN, !sensorState);  // Invert: LED on when sensor is LOW
 }
