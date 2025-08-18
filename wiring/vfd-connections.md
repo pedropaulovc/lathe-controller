@@ -19,8 +19,8 @@
 - **Terminal 1 (DI1)**: Forward Run (connect Run switch here)
 - **Terminal 3 (DI2)**: Reverse Run (connect Forward/Reverse toggle switch here)
 - **Terminal 4 (DI3)**: Jog Forward (connect Jog switch here)
-- **Terminal 6 (DI4)**: External Fault/E-Stop (connect E-Stop NC contacts)
-- **Terminal 7 (DI5)**: Multi-step speed 1 (optional)
+- **Terminal 6 (DI4)**: External Fault/E-Stop (connect E-Stop NC contacts - normally closed)
+- **Terminal 7 (DI5)**: Main On/Off Switch (connect main power enable switch)
 - **Terminal 8 (DI6)**: Multi-step speed 2 (optional)
 - **Terminal 9 (DI7)**: Coast stop (optional)
 
@@ -32,11 +32,27 @@ All digital inputs are isolated and can accept:
 
 ### Switch Connections
 ```
+24V+ ----[On/Off Switch]----- Terminal 7 (DI5)  (Main power enable)
 24V+ ----[Run Switch]-------- Terminal 1 (DI1)
 24V+ ----[Fwd/Rev Toggle]---- Terminal 3 (DI2)
 24V+ ----[Jog Switch]-------- Terminal 4 (DI3)
-24V+ ----[E-Stop NC]--------- Terminal 6 (DI4)
+24V+ ----[E-Stop NC]--------- Terminal 6 (DI4)  (NC = Normally Closed)
 ```
+
+### E-Stop Switch Configuration
+The E-Stop uses a **normally closed (NC)** switch configuration:
+- **Normal Operation**: E-Stop switch is closed, 24V+ flows to Terminal 6 (DI4)
+- **Emergency Stop**: E-Stop switch opens, removing 24V+ from Terminal 6 (DI4)
+- **VFD Response**: Loss of signal on DI4 triggers external fault, immediately stops motor
+- **Reset**: E-Stop must be reset (closed) before VFD can restart
+
+### Main On/Off Switch Configuration
+The main on/off switch provides master enable/disable control:
+- **Switch Type**: SPST (Single Pole, Single Throw) momentary or maintained contact
+- **ON Position**: Switch closed, 24V+ flows to Terminal 7 (DI5), enables VFD operation
+- **OFF Position**: Switch open, removes 24V+ from Terminal 7 (DI5), disables VFD
+- **Function**: Master enable - all other controls require this switch to be ON
+- **Safety**: Provides additional safety layer beyond E-Stop for planned shutdowns
 
 ### Forward/Reverse Toggle Switch Wiring
 The forward/reverse control uses a SPDT (single pole, double throw) metal toggle switch:
@@ -62,6 +78,7 @@ Set these parameters for proper operation:
 - P4-02 = 2 (DI2 = Reverse run)
 - P4-03 = 7 (DI3 = Jog forward)
 - P4-04 = 9 (DI4 = External fault)
+- P4-05 = 8 (DI5 = Enable operation - main on/off switch)
 
 ### Safety Notes for Reverse Operation
 - **WARNING**: Ensure the lathe chuck and workpiece are suitable for reverse rotation
