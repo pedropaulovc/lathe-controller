@@ -3,6 +3,7 @@
 const int IR_SENSOR_PIN = 6;       // IR sensor output pin (set as INPUT)
 const int TM1637_CLK_PIN = 9;      // TM1637 Clock pin
 const int TM1637_DIO_PIN = 10;     // TM1637 Data pin
+const int ONBOARD_LED_PIN = 13;    // Onboard LED pin (standard Arduino pin)
 
 TM1637Display display(TM1637_CLK_PIN, TM1637_DIO_PIN);
 
@@ -11,21 +12,27 @@ unsigned long lastDisplayUpdate = 0;
 unsigned long lastPulseTime = 0;
 unsigned long currentTime = 0;
 float currentRPM = 0.0;
+unsigned long lastLedToggle = 0;
+bool ledState = false;
 
 const unsigned long DISPLAY_UPDATE_INTERVAL = 250;  // 250ms update rate
 const unsigned long TIMEOUT_PERIOD = 2000;         // 2 seconds timeout for zero RPM
+const unsigned long LED_BLINK_INTERVAL = 100;      // 100ms LED blink rate during detection
 const int PULSES_PER_REVOLUTION = 60;               // 60 slots in interrupt wheel
 
 void setup() {
-  pinMode(IR_SENSOR_PIN, INPUT);  // Set IR sensor pin as input (required for Arduino)
+  pinMode(IR_SENSOR_PIN, INPUT);     // Set IR sensor pin as input (required for Arduino)
+  pinMode(ONBOARD_LED_PIN, OUTPUT);  // Set onboard LED pin as output
+  digitalWrite(ONBOARD_LED_PIN, LOW); // Start with LED off
   
-  display.setBrightness(0x0a);    // Set brightness (0x00-0x0f)
-  display.clear();                // Clear display
+  display.setBrightness(0x0a);       // Set brightness (0x00-0x0f)
+  display.clear();                   // Clear display
   
   attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN), pulseISR, FALLING);
   
   displayRPM(0);
   lastDisplayUpdate = millis();
+  lastLedToggle = millis();
 }
 
 void loop() {
@@ -36,6 +43,9 @@ void loop() {
     displayRPM(currentRPM);
     lastDisplayUpdate = currentTime;
   }
+  
+  // Handle LED blinking when sensor is active
+  manageLED();
 }
 
 void pulseISR() {
@@ -71,4 +81,22 @@ void displayRPM(float rpm) {
   }
   
   display.showNumberDec(displayValue, false);  // Show number without leading zeros
+}
+
+void manageLED() {
+  // Check if we're receiving pulses (sensor is active)
+  bool sensorActive = (currentTime - lastPulseTime < TIMEOUT_PERIOD);
+  
+  if (sensorActive) {
+    // Blink LED when sensor is detecting
+    if (currentTime - lastLedToggle >= LED_BLINK_INTERVAL) {
+      ledState = !ledState;
+      digitalWrite(ONBOARD_LED_PIN, ledState ? HIGH : LOW);
+      lastLedToggle = currentTime;
+    }
+  } else {
+    // Turn off LED when no sensor activity
+    digitalWrite(ONBOARD_LED_PIN, LOW);
+    ledState = false;
+  }
 }
