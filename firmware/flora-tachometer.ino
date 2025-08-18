@@ -1,8 +1,8 @@
 #include <TM1637Display.h>
 
-const int IR_SENSOR_PIN = 2;       // Interrupt capable pin (set as INPUT)
-const int TM1637_CLK_PIN = 3;      // TM1637 Clock pin
-const int TM1637_DIO_PIN = 4;      // TM1637 Data pin
+const int IR_SENSOR_PIN = 6;       // IR sensor output pin (set as INPUT)
+const int TM1637_CLK_PIN = 9;      // TM1637 Clock pin
+const int TM1637_DIO_PIN = 10;     // TM1637 Data pin
 
 TM1637Display display(TM1637_CLK_PIN, TM1637_DIO_PIN);
 
