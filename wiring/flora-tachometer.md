@@ -2,27 +2,34 @@
 
 ## Component Connections
 
-### Slotted Optical Switch (e.g., TCST2103)
+### IR Sensor Module
 ```
-Pin 1 (Anode)    ---- 3.3V (FLORA)
-Pin 2 (Cathode)  ---- 330Ω resistor ---- GND
-Pin 3 (Collector)---- 10kΩ pullup ---- 3.3V
-Pin 4 (Emitter)  ---- GND
+IR Sensor Pin    Connection           Notes
+-------------    -----------          -----
++5V/VCC         ---- 3.3V/5V (FLORA) Power supply 3.3V-5V
+GND             ---- GND (FLORA)      Ground connection
+OUT             ---- D2 (FLORA)       Signal output to interrupt pin
 ```
+
+**Important Arduino Setup Notes:**
+- Set the IR sensor input pin as INPUT mode: `pinMode(IR_SENSOR_PIN, INPUT);`
+- For Arduino and higher-level controllers, **always** configure I/O pins as input/receive mode
+- 51 series MCUs can be used directly without input/output mode configuration
 
 ### FLORA Connections
-- **D2**: Optical switch signal (interrupt capable pin)
-- **3.3V**: Power for optical switch
+- **D2**: IR sensor signal output (interrupt capable pin, set as INPUT)
+- **D3**: TM1637 Clock pin (CLK)
+- **D4**: TM1637 Data pin (DIO)
+- **3.3V/5V**: Power for IR sensor (supports both voltages)
 - **GND**: Common ground
 
-### 7-Segment Display (4-digit with MAX7219 driver)
+### TM1637 4-Digit Display
 ```
-FLORA Pin    MAX7219 Pin    Function
----------    -----------    --------
-D10          CS             Chip Select
-D11          DIN            Data In  
-D13          CLK            Clock
-3.3V         VCC            Power
+FLORA Pin    TM1637 Pin     Function
+---------    ----------     --------
+D3           CLK            Clock signal
+D4           DIO            Data I/O
+5V/3.3V      VCC            Power (3.3V-5V)
 GND          GND            Ground
 ```
 
@@ -36,23 +43,26 @@ GND          GND            Ground
 - **Mounting**: Central bore with keyway or set screw holes
 
 ### Power Supply
-- **Input**: 12VDC wall adapter
-- **Regulation**: 7805 linear regulator (12V → 5V)
-- **FLORA Power**: USB connector or 3.3V pin (internal regulator)
+- **Input**: 12VDC wall adapter or VFD 24V supply
+- **FLORA Power**: USB connector or external 5V supply
+- **IR Sensor**: Powered from FLORA 3.3V or 5V pin
+- **TM1637 Display**: Powered from FLORA 3.3V or 5V pin
 
 ### Circuit Protection
-- **Optical switch**: 330Ω current limiting resistor
-- **Power supply**: 1A fuse on 12V input
+- **Power supply**: 1A fuse on external power input
 - **FLORA**: Built-in protection on USB/power pins
+- **Components**: TM1637 and IR sensor modules include built-in protection
 
 ## Wiring Diagram Notes
-1. Keep optical switch wires short (<6 inches) to minimize noise
+1. Keep IR sensor wires short (<6 inches) to minimize noise
 2. Use shielded cable if spindle has variable speed drive nearby
-3. Mount optical switch securely - vibration will cause false readings
-4. Test gap between wheel and switch (typically 1-3mm optimal)
+3. Mount IR sensor securely - vibration will cause false readings
+4. Test gap between wheel and sensor (typically 1-5mm optimal for IR sensors)
 5. Brass wheel with slitting saw cuts provides excellent optical contrast
+6. **Critical**: Set IR sensor pin as INPUT mode in Arduino setup()
 
 ## Calibration
 - **Pulses per revolution**: 60 (based on interrupt wheel slots)
 - **RPM calculation**: RPM = (pulse_count * 60) / (time_seconds * 60)
 - **Update rate**: Display updates every 250ms for stable reading
+- **IR Sensor Setup**: Ensure sensor detects slot transitions reliably
