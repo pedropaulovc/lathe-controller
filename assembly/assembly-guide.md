@@ -48,16 +48,16 @@ Follow wiring diagrams in `/wiring/` directory:
 ```
 IR Sensor VCC ---- FLORA 3.3V or 5V
 IR Sensor GND ---- FLORA GND
-IR Sensor OUT ---- FLORA D2 (set as INPUT in firmware)
+IR Sensor OUT ---- FLORA D6 (set as INPUT in firmware)
 
 TM1637 VCC ---- FLORA 3.3V or 5V
 TM1637 GND ---- FLORA GND
-TM1637 CLK ---- FLORA D3
-TM1637 DIO ---- FLORA D4
+TM1637 CLK ---- FLORA D9
+TM1637 DIO ---- FLORA D10
 ```
 
 **Critical Setup Notes:**
-- IR sensor pin D2 MUST be configured as INPUT mode in firmware setup()
+- IR sensor pin D6 MUST be configured as INPUT mode in firmware setup()
 - Both TM1637 and IR sensor support 3.3V or 5V operation
 
 #### VFD Control Circuit (Direct Connections)
