@@ -8,6 +8,7 @@ const int ONBOARD_LED_PIN = 13;    // Onboard LED pin (standard Arduino pin)
 TM1637Display display(TM1637_CLK_PIN, TM1637_DIO_PIN);
 
 volatile unsigned long pulseCount = 0;
+bool lastSensorState = HIGH;  // Track sensor state for edge detection
 unsigned long lastDisplayUpdate = 0;
 unsigned long lastPulseTime = 0;
 unsigned long currentTime = 0;
@@ -25,7 +26,8 @@ void setup() {
   display.setBrightness(0x0a);       // Set brightness (0x00-0x0f)
   display.clear();                   // Clear display
   
-  attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN), pulseISR, FALLING);
+  // Initialize sensor state
+  lastSensorState = digitalRead(IR_SENSOR_PIN);
   
   displayRPM(0);
   lastDisplayUpdate = millis();
@@ -34,19 +36,29 @@ void setup() {
 void loop() {
   currentTime = millis();
   
+  // Poll sensor for edge detection (replaces interrupt)
+  checkSensor();
+  
   if (currentTime - lastDisplayUpdate >= DISPLAY_UPDATE_INTERVAL) {
     calculateRPM();
     displayRPM(currentRPM);
     lastDisplayUpdate = currentTime;
   }
   
-  // Handle LED blinking when sensor is active
+  // Handle LED when sensor is active
   manageLED();
 }
 
-void pulseISR() {
-  pulseCount++;
-  lastPulseTime = millis();
+void checkSensor() {
+  bool currentSensorState = digitalRead(IR_SENSOR_PIN);
+  
+  // Detect falling edge (HIGH to LOW transition)
+  if (lastSensorState == HIGH && currentSensorState == LOW) {
+    pulseCount++;
+    lastPulseTime = millis();
+  }
+  
+  lastSensorState = currentSensorState;
 }
 
 void calculateRPM() {
