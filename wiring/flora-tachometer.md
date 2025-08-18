@@ -43,10 +43,18 @@ GND          GND            Ground
 - **Mounting**: Central bore with keyway or set screw holes
 
 ### Power Supply
-- **Input**: 12VDC wall adapter or VFD 24V supply
-- **FLORA Power**: USB connector or external 5V supply
+- **Input**: VFD 24VDC supply (Terminal 24V+, 24V-)
+- **FLORA Power**: 24V to 5V step-down converter (LM2596 or similar)
 - **IR Sensor**: Powered from FLORA 3.3V or 5V pin
 - **TM1637 Display**: Powered from FLORA 3.3V or 5V pin
+
+### VFD Power Connection
+```
+VFD Terminal 24V+ ---- Step-down converter input (+)
+VFD Terminal 24V- ---- Step-down converter input (-)
+Converter 5V out  ---- FLORA VIN pin
+Converter GND     ---- FLORA GND pin
+```
 
 ### Circuit Protection
 - **Power supply**: 1A fuse on external power input
