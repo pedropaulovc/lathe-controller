@@ -1,11 +1,10 @@
-#include <LedControl.h>
+#include <TM1637Display.h>
 
-const int OPTICAL_SWITCH_PIN = 2;  // Interrupt capable pin
-const int CS_PIN = 10;             // MAX7219 Chip Select
-const int DIN_PIN = 11;            // MAX7219 Data In
-const int CLK_PIN = 13;            // MAX7219 Clock
+const int IR_SENSOR_PIN = 2;       // Interrupt capable pin (set as INPUT)
+const int TM1637_CLK_PIN = 3;      // TM1637 Clock pin
+const int TM1637_DIO_PIN = 4;      // TM1637 Data pin
 
-LedControl lc = LedControl(DIN_PIN, CLK_PIN, CS_PIN, 1);
+TM1637Display display(TM1637_CLK_PIN, TM1637_DIO_PIN);
 
 volatile unsigned long pulseCount = 0;
 unsigned long lastDisplayUpdate = 0;
@@ -18,13 +17,12 @@ const unsigned long TIMEOUT_PERIOD = 2000;         // 2 seconds timeout for zero
 const int PULSES_PER_REVOLUTION = 60;               // 60 slots in interrupt wheel
 
 void setup() {
-  pinMode(OPTICAL_SWITCH_PIN, INPUT_PULLUP);
+  pinMode(IR_SENSOR_PIN, INPUT);  // Set IR sensor pin as input (required for Arduino)
   
-  lc.shutdown(0, false);       // Wake up MAX7219
-  lc.setIntensity(0, 8);       // Set brightness (0-15)
-  lc.clearDisplay(0);          // Clear display
+  display.setBrightness(0x0a);    // Set brightness (0x00-0x0f)
+  display.clear();                // Clear display
   
-  attachInterrupt(digitalPinToInterrupt(OPTICAL_SWITCH_PIN), pulseISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN), pulseISR, FALLING);
   
   displayRPM(0);
   lastDisplayUpdate = millis();
@@ -72,29 +70,5 @@ void displayRPM(float rpm) {
     displayValue = 9999;  // Limit to 4 digits
   }
   
-  lc.clearDisplay(0);
-  
-  if (displayValue == 0) {
-    lc.setDigit(0, 0, 0, false);
-    lc.setDigit(0, 1, 0, false);
-    lc.setDigit(0, 2, 0, false);
-    lc.setDigit(0, 3, 0, false);
-  } else {
-    int digits[4];
-    digits[0] = displayValue % 10;           // Ones
-    digits[1] = (displayValue / 10) % 10;    // Tens
-    digits[2] = (displayValue / 100) % 10;   // Hundreds
-    digits[3] = (displayValue / 1000) % 10;  // Thousands
-    
-    bool leadingZero = true;
-    for (int i = 3; i >= 0; i--) {
-      if (digits[i] != 0) {
-        leadingZero = false;
-      }
-      
-      if (!leadingZero || i == 0) {
-        lc.setDigit(0, i, digits[i], false);
-      }
-    }
-  }
+  display.showNumberDec(displayValue, false);  // Show number without leading zeros
 }
